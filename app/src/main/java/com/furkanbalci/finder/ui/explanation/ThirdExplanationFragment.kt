@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.furkanbalci.finder.R
 import com.furkanbalci.finder.databinding.FragmentExplanation3Binding
+import com.furkanbalci.finder.ui.other.WaitingFragment
 import com.furkanbalci.finder.ui.question.QuestionFragment
 
 class ThirdExplanationFragment : Fragment() {
@@ -56,13 +57,11 @@ class ThirdExplanationFragment : Fragment() {
             binding.button.isEnabled = false
             binding.button.alpha = 0.2f
 
-            Log.e("FURKAN", "oldu 1")
-            object : CountDownTimer(3000, 1000) {
+            object : CountDownTimer(2400, 1000) {
                 override fun onTick(millisUntilFinished: Long) {}
 
                 override fun onFinish() {
-                    Log.e("FURKAN", "oldu 2")
-                    activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.nav_host_fragment_activity_main, QuestionFragment())?.commit()
+                    activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.nav_host_fragment_activity_main, WaitingFragment("Anket\noluşturuluyor..."))?.commit()
                 }
             }.start()
         }

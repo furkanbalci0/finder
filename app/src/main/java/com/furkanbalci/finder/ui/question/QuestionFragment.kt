@@ -12,9 +12,6 @@ import com.furkanbalci.finder.manager.SurveyManager
 import com.furkanbalci.finder.model.Category
 import com.furkanbalci.finder.model.Option
 import com.furkanbalci.finder.model.Survey
-import com.google.firebase.firestore.FirebaseFirestore
-
-
 
 
 class QuestionFragment(survey: Survey? = null) : Fragment() {

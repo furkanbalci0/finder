@@ -42,8 +42,7 @@ class SplashActivity : AppCompatActivity() {
 
         binding.logo.visibility = android.view.View.INVISIBLE
 
-        //Timer 3s
-
+        //Timer 3 seconds.
         val waitTime = 4500L //4500
         object : CountDownTimer(waitTime, 1000) {
             override fun onTick(millisUntilFinished: Long) {}

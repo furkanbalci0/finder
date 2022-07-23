@@ -3,7 +3,9 @@ package com.furkanbalci.finder.model
 //Progress scenario for 10 questions
 class Playbook {
 
-    val surveys: Set<Survey> = HashSet()
-
+    companion object {
+        val surveys: Set<Survey> = HashSet()
+        var currentSurvey: Survey? = null
+    }
 
 }

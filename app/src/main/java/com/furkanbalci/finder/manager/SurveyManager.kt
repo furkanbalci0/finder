@@ -8,9 +8,15 @@ class SurveyManager {
 
     companion object {
         val surveyList = ArrayList<Survey>()
+
         init {
-            val survey = Survey(1, listOf(Option(1, "DKTT"), Option(2, "Pinhani"), Option(3, "Yüzyüzeyken Konuşuruz")), Category.MUSIC)
-            surveyList.add(survey)
+            surveyList.add(
+                Survey(
+                    1,
+                    listOf(Option(1, "DKTT"), Option(2, "Pinhani"), Option(3, "Yüzyüzeyken Konuşuruz")),
+                    Category.MUSIC
+                )
+            )
         }
     }
 

@@ -35,7 +35,7 @@ class FirstExplanationFragment : Fragment() {
     private fun disableButton() {
         binding.button.isEnabled = false
         binding.button.alpha = 0.2f
-        object : CountDownTimer(5000, 1000) {
+        object : CountDownTimer(4000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
 
             }
