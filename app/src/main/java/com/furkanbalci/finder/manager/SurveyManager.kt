@@ -13,11 +13,22 @@ class SurveyManager {
             surveyList.add(
                 Survey(
                     1,
-                    listOf(Option(1, "DKTT"), Option(2, "Pinhani"), Option(3, "Yüzyüzeyken Konuşuruz")),
+                    listOf(Option(1, "DKTT"), Option(2, "Evdeki Saat"), Option(3, "Son Feci Bisiklet")),
                     Category.MUSIC
                 )
             )
         }
+    }
+
+    fun giveRandomSurveys(): List<Survey> {
+        val randomList = ArrayList<Survey>()
+        for (i in 0..9) {
+            val randomIndex = (0 until surveyList.size).random()
+            surveyList[randomIndex].let {
+                randomList.add(it)
+            }
+        }
+        return randomList
     }
 
 

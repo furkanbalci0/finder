@@ -1,11 +1,12 @@
 package com.furkanbalci.finder.model
 
-//Progress scenario for 10 questions
-class Playbook {
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.auth.User
 
-    companion object {
-        val surveys: Set<Survey> = HashSet()
-        var currentSurvey: Survey? = null
-    }
+//Progress scenario for 10 questions
+class Playbook(val user: FirebaseUser?, val surveys: Set<Survey>) {
+
+    var currentSurvey: Survey? = null
 
 }
