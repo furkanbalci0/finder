@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import com.furkanbalci.finder.R
 import com.furkanbalci.finder.databinding.FragmentExplanation3Binding
 import com.furkanbalci.finder.databinding.FragmentWaitingBinding
+import com.furkanbalci.finder.manager.SurveyManager
 import com.furkanbalci.finder.model.Playbook
 import com.furkanbalci.finder.model.Survey
 import com.furkanbalci.finder.ui.question.QuestionFragment
@@ -32,7 +33,7 @@ class WaitingFragment(private var message: String) : Fragment() {
             override fun onFinish() {
 
                 //Create new playbook.
-                val playbook = Playbook(null)
+                val playbook = Playbook(null, SurveyManager.giveRandomSurveys())
 
                 activity?.supportFragmentManager?.beginTransaction()
                     ?.replace(R.id.nav_host_fragment_activity_main, QuestionFragment())?.commit()
