@@ -5,8 +5,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.auth.User
 
 //Progress scenario for 10 questions
-class Playbook(val user: FirebaseUser?, val surveys: Set<Survey>) {
+class Playbook(val surveys: Set<Survey>) {
 
-    var currentSurvey: Survey? = null
+    var completed = false
 
 }

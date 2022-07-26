@@ -9,8 +9,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.furkanbalci.finder.R
 import com.furkanbalci.finder.databinding.FragmentExplanation3Binding
+import com.furkanbalci.finder.manager.DataManager
+import com.furkanbalci.finder.manager.SurveyManager
+import com.furkanbalci.finder.model.Playbook
+import com.furkanbalci.finder.model.Survey
 import com.furkanbalci.finder.ui.other.WaitingFragment
 import com.furkanbalci.finder.ui.question.QuestionFragment
+import com.google.firebase.auth.FirebaseAuth
 
 class ThirdExplanationFragment : Fragment() {
 
@@ -58,10 +63,21 @@ class ThirdExplanationFragment : Fragment() {
             binding.button.alpha = 0.2f
 
             object : CountDownTimer(2400, 1000) {
-                override fun onTick(millisUntilFinished: Long) {}
+                override fun onTick(millisUntilFinished: Long) = Unit
 
                 override fun onFinish() {
-                    activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.nav_host_fragment_activity_main, WaitingFragment("Anket\noluşturuluyor..."))?.commit()
+                    activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.nav_host_fragment_activity_main,
+                        WaitingFragment("Anket\noluşturuluyor...") {
+
+                            //Create new playbook.
+                            val playbook = Playbook(SurveyManager.giveRandomSurveys())
+
+                            //Save playbook.
+                            DataManager.currentPlaybook = playbook
+
+                            activity?.supportFragmentManager?.beginTransaction()
+                                ?.replace(R.id.nav_host_fragment_activity_main, QuestionFragment(playbook))?.commit()
+                        })?.commit()
                 }
             }.start()
         }

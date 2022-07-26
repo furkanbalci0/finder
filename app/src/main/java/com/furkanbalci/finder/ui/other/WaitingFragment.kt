@@ -2,19 +2,14 @@ package com.furkanbalci.finder.ui.other
 
 import android.os.Bundle
 import android.os.CountDownTimer
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.furkanbalci.finder.R
-import com.furkanbalci.finder.databinding.FragmentExplanation3Binding
+import androidx.fragment.app.Fragment
 import com.furkanbalci.finder.databinding.FragmentWaitingBinding
-import com.furkanbalci.finder.manager.SurveyManager
-import com.furkanbalci.finder.model.Playbook
-import com.furkanbalci.finder.model.Survey
-import com.furkanbalci.finder.ui.question.QuestionFragment
 
-class WaitingFragment(private var message: String) : Fragment() {
+//Flexible wait screen.
+class WaitingFragment(private var message: String, private val waitTime: Long = 5000, val runnable: Runnable) : Fragment() {
 
     private var _binding: FragmentWaitingBinding? = null
 
@@ -26,22 +21,16 @@ class WaitingFragment(private var message: String) : Fragment() {
         _binding = FragmentWaitingBinding.inflate(inflater, container, false)
         binding.waitMessage.text = message
 
-
-        object : CountDownTimer(5000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {}
-
-            override fun onFinish() {
-
-                //Create new playbook.
-                val playbook = Playbook(null, SurveyManager.giveRandomSurveys())
-
-                activity?.supportFragmentManager?.beginTransaction()
-                    ?.replace(R.id.nav_host_fragment_activity_main, QuestionFragment())?.commit()
-            }
+        object : CountDownTimer(waitTime, 1000) {
+            override fun onTick(millisUntilFinished: Long) = Unit
+            override fun onFinish() = runnable.run()
         }.start()
 
         return binding.root
     }
 
-
+    fun setMessage(message: String) {
+        this.message = message
+        binding.waitMessage.text = message
+    }
 }

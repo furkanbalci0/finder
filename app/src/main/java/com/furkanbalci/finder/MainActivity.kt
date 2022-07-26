@@ -1,10 +1,8 @@
 package com.furkanbalci.finder
 
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowInsets
 import android.view.WindowInsetsController
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import com.furkanbalci.finder.databinding.ActivityMainBinding

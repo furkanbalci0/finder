@@ -5,17 +5,6 @@ import com.furkanbalci.finder.model.Playbook
 class DataManager {
 
     companion object {
-        val instance = DataManager()
+        var currentPlaybook: Playbook? = null
     }
-
-    private var currentPlaybook : Playbook? = null
-
-    fun currentPlaybook(): Playbook? {
-        return currentPlaybook
-    }
-
-    fun setCurrentPlaybook(playbook: Playbook) {
-        currentPlaybook = playbook
-    }
-
 }

@@ -1,34 +1,36 @@
 package com.furkanbalci.finder.manager
 
 import com.furkanbalci.finder.model.Category
-import com.furkanbalci.finder.model.Option
 import com.furkanbalci.finder.model.Survey
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SurveyManager {
 
     companion object {
-        val surveyList = ArrayList<Survey>()
+        private val surveyList = ArrayList<Survey>()
 
-        init {
-            surveyList.add(
-                Survey(
-                    1,
-                    listOf(Option(1, "DKTT"), Option(2, "Evdeki Saat"), Option(3, "Son Feci Bisiklet")),
-                    Category.MUSIC
-                )
-            )
-        }
-    }
-
-    fun giveRandomSurveys(): List<Survey> {
-        val randomList = ArrayList<Survey>()
-        for (i in 0..9) {
-            val randomIndex = (0 until surveyList.size).random()
-            surveyList[randomIndex].let {
-                randomList.add(it)
+        fun loadAllSurveys() {
+            val db = FirebaseFirestore.getInstance()
+            db.collection("surveys").get().addOnSuccessListener { result ->
+                for (document in result) {
+                    val options = document.get("options") as ArrayList<String>
+                    val survey = Survey(document.id, options, Category.valueOf(document.get("category").toString()))
+                    surveyList.add(survey)
+                }
             }
         }
-        return randomList
+
+        fun giveRandomSurveys(): Set<Survey> {
+            val randomList = HashSet<Survey>()
+            while (randomList.size < 10) {
+                val randomIndex = (0 until surveyList.size).random()
+                surveyList[randomIndex].let {
+                    if (!randomList.contains(it)) randomList.add(it)
+                }
+            }
+            return randomList
+        }
+
     }
 
 

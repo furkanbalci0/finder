@@ -8,17 +8,18 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.furkanbalci.finder.R
 import com.furkanbalci.finder.databinding.FragmentQuestionBinding
-import com.furkanbalci.finder.manager.SurveyManager
-import com.furkanbalci.finder.model.Category
-import com.furkanbalci.finder.model.Option
-import com.furkanbalci.finder.model.Survey
+import com.furkanbalci.finder.model.Playbook
+import com.furkanbalci.finder.ui.other.WaitingFragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
+import org.json.JSONObject
+import java.util.*
 
 
-class QuestionFragment(survey: Survey? = null) : Fragment() {
+class QuestionFragment(private val playbook: Playbook) : Fragment() {
 
     private var _binding: FragmentQuestionBinding? = null
-    private lateinit var selectedSurvey: Survey
-    private var _survey: Survey? = survey
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -27,89 +28,68 @@ class QuestionFragment(survey: Survey? = null) : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentQuestionBinding.inflate(inflater, container, false)
 
+
+        if (playbook.surveys.stream().filter { it.completed == true }.count() == playbook.surveys.size.toLong()) {
+            this.completePlaybook()
+            return binding.root
+        }
+
+        //Select survey.
+        val survey = playbook.surveys.stream().filter { it.completed == false }.findFirst().get()
+        binding.mfProgressBar.progress = 10 * (playbook.surveys.indexOf(survey) + 1) - 10
+        binding.queue.text = "${binding.mfProgressBar.progress / 10} / ${playbook.surveys.size}"
+
         //Display false animation.
         binding.animationView.visibility = View.INVISIBLE
 
-        selectedSurvey = _survey ?: SurveyManager.surveyList[0]
+        val buttons = listOf(binding.button1, binding.button2, binding.button3)
+        for (button in buttons) {
 
-        binding.button1.text = selectedSurvey.options[0].content
-        binding.button1.setOnClickListener {
-            selectedSurvey.selectedOption = selectedSurvey.options[0]
-            binding.animationView.visibility = View.VISIBLE
-            binding.animationView.playAnimation()
-            object : CountDownTimer(1500L, 1000) {
-                override fun onTick(millisUntilFinished: Long) {}
+            val queue = buttons.indexOf(button)
+            button.text = survey.options[queue]
+            button.setOnClickListener {
+                survey.selectedOption = survey.options[queue]
+                binding.animationView.visibility = View.VISIBLE
+                binding.animationView.playAnimation()
+                object : CountDownTimer(1500L, 1000) {
+                    override fun onTick(millisUntilFinished: Long) = Unit
 
-                override fun onFinish() {
+                    override fun onFinish() {
 
-                    activity?.supportFragmentManager?.beginTransaction()?.replace(
-                        R.id.nav_host_fragment_activity_main,
-                        QuestionFragment(
-                            Survey(
-                                2,
-                                listOf(Option(1, "5 CM"), Option(2, "10 CM"), Option(3, "15 CM")),
-                                Category.OTHER
-                            )
-                        )
-                    )?.addToBackStack(null)?.commit()
-
-                }
-            }.start()
+                        survey.completed = true
+                        activity?.supportFragmentManager?.beginTransaction()?.replace(
+                            R.id.nav_host_fragment_activity_main,
+                            QuestionFragment(playbook)
+                        )?.addToBackStack(null)?.commit()
+                    }
+                }.start()
+            }
         }
-
-        binding.button2.text = selectedSurvey.options[1].content
-        binding.button2.setOnClickListener {
-            selectedSurvey.selectedOption = selectedSurvey.options[1]
-
-            binding.animationView.visibility = View.VISIBLE
-            binding.animationView.playAnimation()
-            object : CountDownTimer(1500L, 1000) {
-                override fun onTick(millisUntilFinished: Long) {}
-
-                override fun onFinish() {
-
-                    activity?.supportFragmentManager?.beginTransaction()?.replace(
-                        R.id.nav_host_fragment_activity_main,
-                        QuestionFragment(
-                            Survey(
-                                2,
-                                listOf(Option(1, "5 CM"), Option(2, "10 CM"), Option(3, "15 CM")),
-                                Category.OTHER
-                            )
-                        )
-                    )?.addToBackStack(null)?.commit()
-
-                }
-            }.start()
-        }
-
-        binding.button3.text = selectedSurvey.options[2].content
-        binding.button3.setOnClickListener {
-            selectedSurvey.selectedOption = selectedSurvey.options[2]
-
-            binding.animationView.visibility = View.VISIBLE
-            binding.animationView.playAnimation()
-            object : CountDownTimer(1500L, 1000) {
-                override fun onTick(millisUntilFinished: Long) {}
-
-                override fun onFinish() {
-
-                    activity?.supportFragmentManager?.beginTransaction()?.replace(
-                        R.id.nav_host_fragment_activity_main,
-                        QuestionFragment(
-                            Survey(
-                                2,
-                                listOf(Option(1, "5 CM"), Option(2, "10 CM"), Option(3, "15 CM")),
-                                Category.OTHER
-                            )
-                        )
-                    )?.addToBackStack(null)?.commit()
-
-                }
-            }.start()
-        }
-
-
         return binding.root;
+    }
+
+    private fun completePlaybook() {
+        val fragment = WaitingFragment("Sonuçlar\ntoplanıyor...", 2000) {}
+        val map = HashMap<String, Any>()
+        map["completed"] = true
+        map["completedAt"] = Date()
+
+        val miniMap = HashMap<String, Any>()
+        for (survey in playbook.surveys) {
+            miniMap[survey.id] = mapOf("category" to survey.category.name, "selected" to survey.selectedOption.toString())
+        }
+        map["surveys"] = miniMap
+        map["user"] = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+        FirebaseFirestore.getInstance()
+            .collection("playbooks")
+            .add(map).addOnSuccessListener {
+                fragment.setMessage("Kişiler\neşleştiriliyor...")
+            }
+
+        playbook.completed = true
+        activity?.supportFragmentManager?.beginTransaction()?.replace(
+            R.id.nav_host_fragment_activity_main, fragment
+        )?.addToBackStack(null)?.commit()
     }
 }

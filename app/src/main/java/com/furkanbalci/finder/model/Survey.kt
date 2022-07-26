@@ -1,9 +1,9 @@
 package com.furkanbalci.finder.model
 
 data class Survey(
-
-    val id: Int,
-    val options: List<Option>,
+    val id: String,
+    val options: List<String>,
     val category: Category,
-    var selectedOption: Option? = null
+    var selectedOption: String? = null,
+    var completed: Boolean? = false
 )

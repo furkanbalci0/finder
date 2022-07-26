@@ -18,6 +18,10 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.furkanbalci.finder.MainActivity
 import com.furkanbalci.finder.R
 import com.furkanbalci.finder.databinding.ActivitySplashBinding
+import com.furkanbalci.finder.manager.SurveyManager
+import com.furkanbalci.finder.model.Category
+import com.furkanbalci.finder.model.Survey
+import com.google.firebase.firestore.FirebaseFirestore
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
@@ -32,6 +36,9 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
+        this.load()
+
         //Hide status bar and navigation bar.
         window.insetsController?.let {
             //https://medium.com/swlh/modifying-system-ui-visibility-in-android-11-e66a4128898b
@@ -66,5 +73,9 @@ class SplashActivity : AppCompatActivity() {
                 }.start()
             }
         }.start()
+    }
+
+    private fun load() {
+        SurveyManager.loadAllSurveys()
     }
 }
